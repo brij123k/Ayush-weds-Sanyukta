@@ -1,0 +1,160 @@
+/* =========================================================
+   Layout system
+   The invite is one 1080 x 14926 canvas (= the reference design).
+   1 design px = 100cqw / 1080, so  calc(N * var(--px))  is N design pixels.
+   ========================================================= */
+:root {
+  --gold: #b8862b;
+  --brown: #5c403a;
+  --paper: #fcf3ec;
+  --max: 600px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #efe4da;
+  font-family: "Gilda Display", Georgia, serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img { display: block; user-select: none; -webkit-user-drag: none; }
+button { border: 0; background: none; padding: 0; cursor: pointer; font: inherit; }
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  aspect-ratio: 1080 / 14926;
+  container-type: inline-size;
+  overflow: hidden;
+  background: var(--paper) url("assets/main-bg.jpg") top left / 100% 100% no-repeat;
+  box-shadow: 0 0 60px rgba(120, 80, 40, .18);
+}
+
+/* every placed element */
+.el {
+  --px: calc(100cqw / 1080);
+  position: absolute;
+  left:  calc(var(--x) * var(--px));
+  top:   calc(var(--y) * var(--px));
+  width: calc(var(--w) * var(--px));
+  height: auto;
+}
+.el[style*="--h"] { height: calc(var(--h) * var(--px)); }
+img.el { pointer-events: none; }
+
+/* =========================================================
+   Motion (subtle, so placement stays true to the design)
+   ========================================================= */
+@keyframes swing   { 0%,100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes sway    { 0%,100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+@keyframes rustleL { 0%,100% { transform: rotate(0); } 50% { transform: rotate(-1.5deg) scale(1.01); } }
+@keyframes rustleR { 0%,100% { transform: rotate(0); } 50% { transform: rotate(1.5deg) scale(1.01); } }
+@keyframes spin    { to { transform: rotate(360deg); } }
+@keyframes bob     { 0%,100% { translate: 0 0; } 50% { translate: 0 calc(-6 * var(--px)); } }
+@keyframes dandiya { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+@keyframes shimmer { 0%,100% { filter: brightness(1) drop-shadow(0 0 0 rgba(212,164,58,0)); }
+                     50%     { filter: brightness(1.12) drop-shadow(0 0 12px rgba(212,164,58,.55)); } }
+
+.swing   { transform-origin: 50% 0;    animation: swing 4s ease-in-out infinite; }
+.sway    { transform-origin: 50% 100%; animation: sway 6s ease-in-out infinite; }
+.tree-l  { transform-origin: 0 0;      animation: rustleL 8s ease-in-out infinite; }
+.tree-r  { transform-origin: 100% 0;   animation: rustleR 8s ease-in-out infinite; }
+.dandiya { transform-origin: 50% 50%;  animation: dandiya 2.6s ease-in-out infinite; }
+.d2 { animation-delay: -1.3s; }
+.d3 { animation-delay: -2.6s; }
+
+/* fade-in on scroll (JS adds .in) */
+.fade { opacity: 0; transition: opacity 1.1s ease; }
+.fade.in { opacity: 1; }
+
+/* =========================================================
+   Scratch heart
+   ========================================================= */
+.scratch { touch-action: none; cursor: grab; animation: shimmer 2.4s ease-in-out infinite; }
+.scratch-img { display: none; }
+.scratch canvas { width: 100%; height: 100%; display: block; }
+.scratch.done { animation: none; transition: opacity .8s ease, transform .8s ease; opacity: 0; transform: scale(1.15); pointer-events: none; }
+
+/* =========================================================
+   Haldi polaroid
+   ========================================================= */
+.haldi-photo { transform: rotate(-7deg); overflow: hidden; }
+.haldi-photo img {
+  position: absolute;
+  left: calc(-10 * var(--px));
+  top:  calc(-28 * var(--px));
+  width:  calc(606 * var(--px));
+  height: calc(600 * var(--px));
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+.haldi-photo.on img { opacity: 1; }
+
+/* =========================================================
+   Sangeet ticket + vinyl
+   ========================================================= */
+.vinyl { pointer-events: auto !important; cursor: pointer; animation: spin 5s linear infinite paused; }
+.vinyl.playing { animation-play-state: running; }
+
+.ticket { perspective: 1400px; }
+.ticket-inner {
+  position: relative; display: block; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .9s cubic-bezier(.3, 1.3, .5, 1);
+  animation: bob 3s ease-in-out infinite;
+}
+.ticket img { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: hidden; }
+.ticket-back { transform: rotateY(180deg); }
+.ticket.flipped .ticket-inner { transform: rotateY(180deg); }
+
+/* =========================================================
+   Countdown  (matches reference: "00 : 00 : 00 : 00")
+   ========================================================= */
+.countdown {
+  display: flex; justify-content: center; align-items: baseline;
+  gap: calc(22 * var(--px));
+  color: var(--brown);
+  font-size: calc(104 * var(--px));
+  line-height: 1;
+  pointer-events: none;
+}
+.countdown b { font-weight: 400; font-variant-numeric: tabular-nums; }
+.countdown i { font-style: normal; }
+
+/* invisible tap areas */
+.hotspot { display: block; border-radius: calc(20 * var(--px)); }
+.hotspot:focus-visible { outline: 2px dashed var(--gold); }
+
+/* =========================================================
+   Loader & toast
+   ========================================================= */
+#loader {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  background: var(--paper);
+  transition: opacity .8s ease, visibility .8s;
+}
+#loader.gone { opacity: 0; visibility: hidden; }
+.loader-inner { display: grid; gap: 14px; justify-items: center; }
+.loader-names { font-size: 28px; color: var(--gold); }
+.loader-bar { width: 140px; height: 2px; background: #ead9c4; overflow: hidden; }
+.loader-bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .3s; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; z-index: 50;
+  transform: translate(-50%, 20px);
+  padding: 10px 18px; border-radius: 999px;
+  background: rgba(60, 40, 20, .88); color: #fff;
+  font-size: 14px; opacity: 0; pointer-events: none;
+  transition: opacity .3s, transform .3s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .fade { opacity: 1; }
+}
