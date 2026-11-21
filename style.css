@@ -97,8 +97,9 @@ img.el { pointer-events: none; }
 /* =========================================================
    Sangeet ticket + vinyl
    ========================================================= */
-.vinyl { pointer-events: auto !important; cursor: pointer; animation: spin 5s linear infinite paused; }
-.vinyl.playing { animation-play-state: running; }
+/* vinyl always spins; it spins faster while the ticket is open / song plays */
+.vinyl { pointer-events: auto !important; cursor: pointer; animation: spin 5s linear infinite; }
+.vinyl.playing { animation-duration: 2.5s; }
 
 .ticket { perspective: 1400px; }
 .ticket-inner {
@@ -143,6 +144,31 @@ img.el { pointer-events: none; }
 .loader-names { font-size: 28px; color: var(--gold); }
 .loader-bar { width: 140px; height: 2px; background: #ead9c4; overflow: hidden; }
 .loader-bar i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .3s; }
+
+/* =========================================================
+   Intro video
+   ========================================================= */
+body.intro-on { overflow: hidden; }
+#intro {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  background: var(--paper);
+  transition: opacity 1.2s ease, transform 1.2s ease, visibility 1.2s;
+}
+/* fade out with a gentle zoom while the invite appears underneath */
+#intro.gone { opacity: 0; transform: scale(1.04); visibility: hidden; pointer-events: none; }
+#intro video {
+  width: 100%; max-width: var(--max); height: 100%;
+  object-fit: cover; display: block;
+  opacity: 0; transition: opacity .6s ease; /* soft fade-in when playback starts */
+}
+#intro video.show { opacity: 1; }
+.intro-btn {
+  position: absolute; bottom: 24px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(60, 40, 20, .55); color: #fff; font-size: 14px;
+}
+.intro-sound { left: 20px; }
 
 .toast {
   position: fixed; left: 50%; bottom: 24px; z-index: 50;

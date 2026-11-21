@@ -10,7 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="intro-on">
+
+  <!-- Intro video: plays first, then fades away to reveal the invite -->
+  <div id="intro" aria-label="Intro video">
+    <video id="introVideo" src="book.mp4" autoplay muted playsinline preload="auto"></video>
+    <button class="intro-btn intro-sound" id="introSound" aria-label="Turn sound on">🔇</button>
+  </div>
 
   <div id="loader">
     <div class="loader-inner">

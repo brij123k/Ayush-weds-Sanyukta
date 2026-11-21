@@ -5,11 +5,50 @@
 const CONFIG = {
   // First event (Haldi) – 23 Jan 2027, 3:00 PM IST
   countdownTo: "2027-01-23T15:00:00+05:30",
-  // Wardrobe Planner link (Google Doc / Drive / PDF). Leave "" to show a "coming soon" note.
-  wardrobePlannerUrl: "",
+  // Wardrobe Planner PDF – downloads when the planner is tapped. Leave "" to show a "coming soon" note.
+  wardrobePlannerUrl: "assets/planner/SA-Planner.pdf",
+  wardrobePlannerFileName: "Sanyukta-Ayush-Style-Guide.pdf",
   // Optional song for the Sangeet ticket / vinyl, e.g. "assets/sangeet/song.mp3"
   sangeetSong: "",
 };
+
+/* ---------- Intro video → then the invite ---------- */
+(function intro() {
+  const wrap = document.getElementById("intro");
+  const video = document.getElementById("introVideo");
+  const sound = document.getElementById("introSound");
+  const PLAY_SECONDS = 3; // play the first 3 seconds, then fade into the invite
+  const FADE_MS = 1200;   // keep in sync with the #intro transition in style.css
+  let closed = false;
+
+  // Smoothly fade the video away to reveal the invitation page. No tap needed.
+  function close() {
+    if (closed) return;
+    closed = true;
+    wrap.classList.add("gone");
+    document.body.classList.remove("intro-on");
+    setTimeout(() => video.pause(), FADE_MS); // keep it moving while it fades
+  }
+
+  video.addEventListener("playing", () => video.classList.add("show"), { once: true });
+  video.addEventListener("timeupdate", () => video.currentTime >= PLAY_SECONDS && close());
+  video.addEventListener("ended", close);
+
+  // Browsers only autoplay muted video. If autoplay is blocked
+  // (e.g. iPhone Low Power Mode), still open the invite after 3 seconds.
+  video.play().catch(() => setTimeout(close, PLAY_SECONDS * 1000));
+
+  // Safety net: on a very slow connection, don't keep guests waiting on a loading video.
+  setTimeout(close, 8000);
+
+  sound.addEventListener("click", () => {
+    video.muted = !video.muted;
+    sound.textContent = video.muted ? "🔇" : "🔊";
+    sound.setAttribute("aria-label", video.muted ? "Turn sound on" : "Turn sound off");
+  });
+
+  video.addEventListener("error", close); // never leave guests stuck on a broken video
+})();
 
 /* ---------- Loader ---------- */
 (function loader() {
@@ -80,10 +119,14 @@ function burst(anchor) {
   const ctx = canvas.getContext("2d");
   const GRID = 18;
   const hit = new Set();
-  let drawing = false, finished = false, last = null;
+  let drawing = false, finished = false, last = null, paintedWidth = 0;
 
   function paint() {
     const r = wrap.getBoundingClientRect();
+    // Mobile browsers fire "resize" when the address bar shows/hides during scroll.
+    // Only repaint when the width really changed, or the guest's scratching is wiped.
+    if (r.width === paintedWidth) return;
+    paintedWidth = r.width;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = r.width * dpr;
     canvas.height = r.height * dpr;
@@ -168,8 +211,8 @@ function burst(anchor) {
 document.querySelectorAll(".planner-link").forEach((a) => {
   if (CONFIG.wardrobePlannerUrl) {
     a.href = CONFIG.wardrobePlannerUrl;
-    a.target = "_blank";
-    a.rel = "noopener";
+    a.setAttribute("download", CONFIG.wardrobePlannerFileName);
+    a.addEventListener("click", () => toast("Downloading the style guide ✨"));
   } else {
     a.addEventListener("click", (e) => {
       e.preventDefault();
