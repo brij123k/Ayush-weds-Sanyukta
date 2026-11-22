@@ -10,13 +10,60 @@ const CONFIG = {
   wardrobePlannerFileName: "Sanyukta-Ayush-Style-Guide.pdf",
   // Optional song for the Sangeet ticket / vinyl, e.g. "assets/sangeet/song.mp3"
   sangeetSong: "",
+  // Background music for the whole invite. Starts when the guest taps the book.
+  // Put the MP3 at this path; if the file is missing, music simply stays off.
+  backgroundMusic: "assets/music/song.mp3",
 };
+
+/* ---------- Background music ---------- */
+const music = (() => {
+  if (!CONFIG.backgroundMusic) return { ready: false, start() {} };
+  const audio = new Audio(CONFIG.backgroundMusic);
+  audio.loop = true;
+  audio.preload = "auto";
+  audio.volume = 0.6;
+  const state = { ready: false, wanted: false };
+
+  const btn = document.createElement("button");
+  btn.className = "music-btn";
+  btn.hidden = true;
+  btn.innerHTML = '<span aria-hidden="true">♫</span>';
+  document.body.appendChild(btn);
+  const show = () => {
+    const on = !audio.paused;
+    btn.classList.toggle("playing", on);
+    btn.setAttribute("aria-label", on ? "Pause music" : "Play music");
+  };
+
+  audio.addEventListener("canplay", () => { state.ready = true; }, { once: true });
+  audio.addEventListener("error", () => { state.ready = false; btn.hidden = true; }); // no file → no music
+  audio.addEventListener("play", show);
+  audio.addEventListener("pause", show);
+
+  btn.addEventListener("click", () => {
+    state.wanted = audio.paused;
+    audio.paused ? audio.play().catch(() => {}) : audio.pause();
+  });
+  // pause when the guest switches app/tab, resume when they come back
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) audio.pause();
+    else if (state.wanted) audio.play().catch(() => {});
+  });
+
+  return {
+    get ready() { return state.ready; },
+    // must be called from a tap (browsers block sound without one)
+    start() {
+      state.wanted = true;
+      audio.play().then(() => { btn.hidden = false; }).catch(() => {});
+    },
+  };
+})();
 
 /* ---------- Intro video → then the invite ---------- */
 (function intro() {
   const wrap = document.getElementById("intro");
   const video = document.getElementById("introVideo");
-  const sound = document.getElementById("introSound");
   // book.mp4: 0–2.2s closed book with "TAP TO OPEN", ~2.5–4.3s the cover opens, then it fades to blank.
   const OPEN_FROM = 2.2;  // on tap, jump here: the moment the cover starts to open
   const OPEN_UNTIL = 4.3; // the cover is open – fade into the invitation
@@ -46,8 +93,7 @@ const CONFIG = {
     if (opening) return;
     opening = true;
     video.currentTime = OPEN_FROM;
-    video.muted = false; // the tap allows sound
-    sound.textContent = "🔊";
+    music.start(); // the tap allows sound: start the background song (book.mp4 itself is silent)
     video.play().catch(close); // if it can't play, just open the site
   });
   // check every frame so we leave before the video's blank ending
@@ -57,13 +103,6 @@ const CONFIG = {
     requestAnimationFrame(watch);
   })();
   video.addEventListener("ended", close);
-
-  sound.addEventListener("click", (e) => {
-    e.stopPropagation(); // the sound button must not open the site
-    video.muted = !video.muted;
-    sound.textContent = video.muted ? "🔇" : "🔊";
-    sound.setAttribute("aria-label", video.muted ? "Turn sound on" : "Turn sound off");
-  });
 
   video.addEventListener("error", close); // never leave guests stuck on a broken video
 })();

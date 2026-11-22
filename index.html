@@ -9,14 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
   <!-- bump ?v= after every change so browsers load the new files instead of a cached copy -->
-  <link rel="stylesheet" href="style.css?v=15" />
+  <link rel="stylesheet" href="style.css?v=23" />
 </head>
 <body class="intro-on">
 
   <!-- Intro video: plays, holds on its "tap to open" frame, and opens the invite when tapped -->
   <div id="intro" aria-label="Intro video">
     <video id="introVideo" src="book.mp4#t=0.05" muted playsinline preload="auto"></video>
-    <button class="intro-btn intro-sound" id="introSound" aria-label="Turn sound on">🔇</button>
   </div>
 
   <div id="loader">
@@ -63,10 +62,12 @@
     </div>
 
     <!-- ========== HALDI (front layer) ========== -->
-    <!-- tap the polaroid → haldi faces (box = the square photo inside the polaroid, tilted -6.5°) -->
+    <!-- tap the polaroid → haldi faces.
+         haldi-face-match.png is this exact area of haldi.png with ONLY the faces turned yellow,
+         so nothing moves when it appears (made from haldi-face.png by image matching). -->
     <button class="el haldi-photo" id="haldiPhoto" aria-label="Tap to begin the masti" aria-pressed="false"
-            style="--x:271; --y:3974; --w:552; --h:552;">
-      <img src="assets/haldi/haldi-face.png" alt="Ayush & Sanyukta with haldi on their faces" />
+            style="--x:230; --y:3936; --w:640; --h:630;">
+      <img src="assets/haldi/haldi-face-match.png" alt="Ayush & Sanyukta with haldi on their faces" />
     </button>
     <img class="el sway d2" src="assets/haldi/flower.png" style="--x:849; --y:4479; --w:189;" alt="" />
     <img class="el sway d3" src="assets/haldi/leaf2.png"  style="--x:0;   --y:4718; --w:204;" alt="" />
@@ -127,6 +128,6 @@
 
   </main>
 
-  <script src="script.js?v=15"></script>
+  <script src="script.js?v=23"></script>
 </body>
 </html>
