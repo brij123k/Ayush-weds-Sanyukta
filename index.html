@@ -8,7 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <!-- bump ?v= after every change so browsers load the new files instead of a cached copy -->
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body class="intro-on">
 
@@ -62,9 +63,9 @@
     </div>
 
     <!-- ========== HALDI (front layer) ========== -->
-    <!-- tap the polaroid → haldi faces (box = photo inside the polaroid, tilted -7°) -->
-    <button class="el haldi-photo" id="haldiPhoto" aria-label="Tap to begin the masti"
-            style="--x:273; --y:3974; --w:548; --h:400;">
+    <!-- tap the polaroid → haldi faces (box = the square photo inside the polaroid, tilted -6.5°) -->
+    <button class="el haldi-photo" id="haldiPhoto" aria-label="Tap to begin the masti" aria-pressed="false"
+            style="--x:271; --y:3974; --w:552; --h:552;">
       <img src="assets/haldi/haldi-face.png" alt="Ayush & Sanyukta with haldi on their faces" />
     </button>
     <img class="el sway d2" src="assets/haldi/flower.png" style="--x:849; --y:4479; --w:189;" alt="" />
@@ -113,6 +114,6 @@
 
   </main>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>

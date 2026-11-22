@@ -88,17 +88,74 @@ function toast(msg) {
   document.querySelectorAll(".fade").forEach((el) => io.observe(el));
 })();
 
+/* ---------- Petal colours (used by the Haldi photo petal blast) ---------- */
+const PETAL_COLORS = ["#f39a2b", "#f7b500", "#e8577a", "#ec7f37", "#f06292", "#ffca28", "#d84315"];
+const rand = (a, b) => a + Math.random() * (b - a);
+
+/* ---------- Flower shower: the marigold petal from the Haldi artwork drifts down ---------- */
+(function petalShower() {
+  const layer = document.createElement("div");
+  layer.className = "petal-shower";
+  layer.setAttribute("aria-hidden", "true");
+  document.body.appendChild(layer);
+  const count = window.innerWidth < 600 ? 6 : 8; // just a few petals, very light
+
+  function start() {
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement("img");
+      p.src = "assets/haldi/petal.png";
+      p.alt = "";
+      p.className = "shower-petal";
+      const dur = rand(12, 18); // slow fall
+      p.style.cssText = `--left:${rand(0, 96)}vw; --size:${rand(16, 30)}px; --dur:${dur}s;
+        --delay:${-rand(0, dur)}s; --drift:${rand(-18, 18)}vw; --spin:${rand(-360, 360)}deg;
+        --flip:${Math.random() < 0.5 ? -1 : 1};`;
+      layer.appendChild(p);
+    }
+  }
+  // start once the intro video has faded away
+  const intro = document.getElementById("intro");
+  if (intro.classList.contains("gone")) start();
+  else new MutationObserver((_, obs) => {
+    if (intro.classList.contains("gone")) { obs.disconnect(); start(); }
+  }).observe(intro, { attributes: true, attributeFilter: ["class"] });
+})();
+
+/* ---------- Petal blast: real flower petals fly out from a point, then float down ---------- */
+function petalBlast(x, y, count = 45) {
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("span");
+    p.className = "petal-blast";
+    const size = rand(12, 22);
+    p.style.cssText = `left:${x}px; top:${y}px; --size:${size}px; --dur:6s;
+      --color:${PETAL_COLORS[i % PETAL_COLORS.length]};`;
+    p.appendChild(document.createElement("i"));
+    document.body.appendChild(p);
+    const a = rand(-Math.PI, 0);              // mostly upwards, like flowers thrown in the air
+    const d = rand(80, 260);
+    const ux = Math.cos(a) * d, uy = Math.sin(a) * d;
+    const fall = rand(250, 450), rot = rand(-720, 720);
+    const anim = p.animate([
+      { transform: "translate(-50%,-50%) scale(.3) rotate(0deg)", opacity: 1 },
+      { transform: `translate(calc(-50% + ${ux}px), calc(-50% + ${uy}px)) scale(1) rotate(${rot / 2}deg)`, opacity: 1, offset: 0.35 },
+      { transform: `translate(calc(-50% + ${ux * 1.3}px), calc(-50% + ${uy + fall}px)) scale(.9) rotate(${rot}deg)`, opacity: 0 },
+    ], { duration: rand(2200, 3200), easing: "cubic-bezier(.2,.7,.4,1)", delay: rand(0, 200), fill: "both" });
+    anim.onfinish = () => p.remove();
+  }
+}
+
 /* ---------- Confetti burst ---------- */
-function burst(anchor) {
+// burst(anchor) bursts from the element's centre; pass { x, y } (viewport px) to burst from a point.
+function burst(anchor, { x, y, colors = ["#d4a43a", "#f4c9d0", "#e9b949", "#c46a7c"], count = 28, spread = 120 } = {}) {
   const r = anchor.getBoundingClientRect();
-  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-  for (let i = 0; i < 28; i++) {
+  const cx = x ?? r.left + r.width / 2, cy = y ?? r.top + r.height / 2;
+  for (let i = 0; i < count; i++) {
     const s = document.createElement("span");
-    const a = Math.random() * Math.PI * 2, d = 60 + Math.random() * 120;
+    const a = Math.random() * Math.PI * 2, d = 60 + Math.random() * spread;
     Object.assign(s.style, {
       position: "fixed", left: cx + "px", top: cy + "px", width: "7px", height: "7px",
       borderRadius: Math.random() > 0.5 ? "50%" : "1px",
-      background: ["#d4a43a", "#f4c9d0", "#e9b949", "#c46a7c"][i % 4],
+      background: colors[i % colors.length],
       zIndex: 60, pointerEvents: "none",
       transition: "transform 1s cubic-bezier(.2,.8,.3,1), opacity 1s ease",
     });
@@ -183,8 +240,26 @@ function burst(anchor) {
 /* ---------- Haldi: tap polaroid → haldi faces ---------- */
 (function haldi() {
   const btn = document.getElementById("haldiPhoto");
-  btn.addEventListener("click", () => {
-    if (btn.classList.toggle("on")) burst(btn);
+  btn.addEventListener("click", (e) => {
+    const on = !btn.classList.contains("on");
+    // Spread the haldi photo out from where the guest tapped (centre for keyboard).
+    // offsetX/Y are in the button's own (un-rotated) coordinates.
+    if (on && e.detail > 0) {
+      btn.style.setProperty("--cx", (e.offsetX / btn.clientWidth) * 100 + "%");
+      btn.style.setProperty("--cy", (e.offsetY / btn.clientHeight) * 100 + "%");
+    } else if (on) {
+      btn.style.setProperty("--cx", "50%");
+      btn.style.setProperty("--cy", "50%");
+    }
+    btn.classList.toggle("on", on);
+    btn.setAttribute("aria-pressed", String(on));
+    if (!on) return;
+    const pt = e.detail > 0 ? { x: e.clientX, y: e.clientY } : {};
+    // haldi powder puff + marigold petals
+    burst(btn, { ...pt, colors: ["#f7c548", "#f2b705", "#ffd95a", "#e9a400"], count: 40, spread: 160 });
+    // flowers blow out over the photo
+    const r = btn.getBoundingClientRect();
+    petalBlast(pt.x ?? r.left + r.width / 2, pt.y ?? r.top + r.height / 2, 15);
   });
 })();
 
