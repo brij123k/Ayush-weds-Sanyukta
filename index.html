@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
   <!-- bump ?v= after every change so browsers load the new files instead of a cached copy -->
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=15" />
 </head>
 <body class="intro-on">
 
@@ -86,8 +86,8 @@
          alt="Lagnotsav – Wedding · 24th January 2027 · Safa Bandhi 3 pm · Lagna Muhurat 6:45 pm" />
     <img class="el swing"    src="assets/wedding/chandelier.png" style="--x:55;  --y:9168; --w:217;" alt="" />
     <img class="el swing d2" src="assets/wedding/chandelier.png" style="--x:772; --y:9236; --w:217;" alt="" />
-    <!-- marigold petals fall over the Lagnotsav section, once it scrolls into view -->
-    <div class="el petal-zone" style="--x:0; --y:8955; --w:1080; --h:2097;" aria-hidden="true"></div>
+    <!-- PINK petals fall over the Lagnotsav section, once it scrolls into view -->
+    <div class="el petal-zone" data-petal="assets/haldi/petal-pink.png" style="--x:0; --y:8955; --w:1080; --h:2097;" aria-hidden="true"></div>
 
     <!-- ========== MAMERU & RUKHWAT ========== -->
     <img class="el fade" src="assets/mameru/mameru.png" style="--x:0; --y:7023; --w:1080;"
@@ -118,10 +118,15 @@
       <span class="cd-unit"><b data-k="s">00</b><small>SECONDS</small></span>
     </div>
     <a class="el hotspot" href="https://www.google.com/maps/search/?api=1&query=Stone+Water+Resort+Karjat"
-       target="_blank" rel="noopener" style="--x:220; --y:13690; --w:640; --h:190;" aria-label="Open Stone Water Resort, Karjat in Google Maps"></a>
+       target="_blank" rel="noopener" style="--x:220; --y:13690; --w:640; --h:270;" aria-label="Open Stone Water Resort, Karjat in Google Maps">
+      <span class="location-label">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+        Tap for location
+      </span>
+    </a>
 
   </main>
 
-  <script src="script.js?v=14"></script>
+  <script src="script.js?v=15"></script>
 </body>
 </html>

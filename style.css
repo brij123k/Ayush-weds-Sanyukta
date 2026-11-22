@@ -169,6 +169,19 @@ img.el { pointer-events: none; }
 .hotspot { display: block; border-radius: calc(20 * var(--px)); }
 .hotspot:focus-visible { outline: 2px dashed var(--gold); }
 
+/* "Tap for location" under Stone Water Resort, Karjat */
+.location-label {
+  position: absolute; left: 0; right: 0; bottom: calc(10 * var(--px));
+  display: flex; justify-content: center; align-items: center; gap: calc(10 * var(--px));
+  color: var(--gold);
+  font-size: calc(34 * var(--px));
+  letter-spacing: .04em;
+  text-decoration: underline;
+  text-underline-offset: calc(8 * var(--px));
+  text-decoration-thickness: 1px;
+}
+.location-label svg { width: calc(34 * var(--px)); height: calc(34 * var(--px)); fill: currentColor; }
+
 /* =========================================================
    Loader & toast
    ========================================================= */

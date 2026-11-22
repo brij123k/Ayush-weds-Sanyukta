@@ -117,7 +117,7 @@ document.querySelectorAll(".petal-zone").forEach((layer) => {
   function start() {
     for (let i = 0; i < COUNT; i++) {
       const p = document.createElement("img");
-      p.src = "assets/haldi/petal.png";
+      p.src = layer.dataset.petal || "assets/haldi/petal.png"; // data-petal picks the colour
       p.alt = "";
       p.className = "zone-petal";
       // sizes / drift are in design px (the layer scales with the invite)
