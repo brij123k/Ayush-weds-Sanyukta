@@ -95,20 +95,20 @@ img.el { pointer-events: none; }
 .haldi-photo.on img { clip-path: circle(150% at var(--cx, 50%) var(--cy, 50%)); }
 
 /* =========================================================
-   Flower shower (assets/haldi/petal.png drifting down)
+   Flower shower – Wardrobe Planner section only
+   (assets/haldi/petal.png falling inside each .petal-zone)
    ========================================================= */
-@keyframes showerFall {
-  from { transform: translate3d(0, -8vh, 0) rotate(0deg) scaleX(var(--flip)); }
-  to   { transform: translate3d(var(--drift), 108vh, 0) rotate(var(--spin)) scaleX(var(--flip)); }
+@keyframes zoneFall {
+  from { top: -4%;  transform: translateX(0) rotate(0deg) scaleX(var(--flip)); }
+  to   { top: 102%; transform: translateX(calc(var(--drift) * var(--px))) rotate(var(--spin)) scaleX(var(--flip)); }
 }
-@keyframes showerSway { 0%,100% { translate: -12px 0; } 50% { translate: 12px 0; } }
-.petal-shower { position: fixed; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
-.shower-petal {
-  position: absolute; top: 0; left: var(--left);
-  width: var(--size); height: auto;
-  animation: showerFall var(--dur) linear var(--delay) infinite both,
-             showerSway calc(var(--dur) / 3) ease-in-out var(--delay) infinite;
-  will-change: transform;
+@keyframes zoneSway { 0%,100% { translate: calc(-14 * var(--px)) 0; } 50% { translate: calc(14 * var(--px)) 0; } }
+.petal-zone { overflow: hidden; pointer-events: none; }
+.zone-petal {
+  position: absolute; top: -4%; left: var(--left);
+  width: calc(var(--size) * var(--px)); height: auto;
+  animation: zoneFall var(--dur) linear var(--delay) infinite backwards,
+             zoneSway calc(var(--dur) / 3) ease-in-out var(--delay) infinite;
 }
 
 /* =========================================================
@@ -154,8 +154,16 @@ img.el { pointer-events: none; }
   line-height: 1;
   pointer-events: none;
 }
+.countdown { align-items: flex-start; }
 .countdown b { font-weight: 400; font-variant-numeric: tabular-nums; }
 .countdown i { font-style: normal; }
+/* number with its label underneath: 00 / DAYS */
+.cd-unit { display: flex; flex-direction: column; align-items: center; }
+.cd-unit small {
+  margin-top: calc(10 * var(--px));
+  font-size: calc(26 * var(--px));
+  letter-spacing: .12em;
+}
 
 /* invisible tap areas */
 .hotspot { display: block; border-radius: calc(20 * var(--px)); }
@@ -187,6 +195,7 @@ body.intro-on { overflow: hidden; }
   transition: opacity 1.2s ease, transform 1.2s ease, visibility 1.2s;
 }
 /* fade out with a gentle zoom while the invite appears underneath */
+#intro { cursor: pointer; }
 #intro.gone { opacity: 0; transform: scale(1.04); visibility: hidden; pointer-events: none; }
 #intro video {
   width: 100%; max-width: var(--max); height: 100%;
@@ -215,5 +224,5 @@ body.intro-on { overflow: hidden; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .fade { opacity: 1; }
   .haldi-photo.on img { clip-path: none; }
-  .petal-shower { display: none; }
+  .petal-zone { display: none; }
 }

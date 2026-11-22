@@ -17,11 +17,13 @@ const CONFIG = {
   const wrap = document.getElementById("intro");
   const video = document.getElementById("introVideo");
   const sound = document.getElementById("introSound");
-  const PLAY_SECONDS = 3; // play the first 3 seconds, then fade into the invite
+  // book.mp4: 0–2.2s closed book with "TAP TO OPEN", ~2.5–4.3s the cover opens, then it fades to blank.
+  const OPEN_FROM = 2.2;  // on tap, jump here: the moment the cover starts to open
+  const OPEN_UNTIL = 4.3; // the cover is open – fade into the invitation
   const FADE_MS = 1200;   // keep in sync with the #intro transition in style.css
-  let closed = false;
+  let closed = false, opening = false;
 
-  // Smoothly fade the video away to reveal the invitation page. No tap needed.
+  // Smoothly fade the video away to reveal the invitation page (only when tapped).
   function close() {
     if (closed) return;
     closed = true;
@@ -30,18 +32,34 @@ const CONFIG = {
     setTimeout(() => video.pause(), FADE_MS); // keep it moving while it fades
   }
 
-  video.addEventListener("playing", () => video.classList.add("show"), { once: true });
-  video.addEventListener("timeupdate", () => video.currentTime >= PLAY_SECONDS && close());
+  // Show the closed book and WAIT. Some phones (iPhone) only paint a frame after play(),
+  // so start muted playback and pause straight away on the closed-book frame.
+  video.addEventListener("loadeddata", () => video.classList.add("show"), { once: true });
+  video.addEventListener("playing", () => {
+    video.classList.add("show");
+    if (!opening) video.pause();
+  });
+  video.play().catch(() => {});
+
+  // Tap the book → play the cover opening, then fade into the invitation.
+  wrap.addEventListener("click", () => {
+    if (opening) return;
+    opening = true;
+    video.currentTime = OPEN_FROM;
+    video.muted = false; // the tap allows sound
+    sound.textContent = "🔊";
+    video.play().catch(close); // if it can't play, just open the site
+  });
+  // check every frame so we leave before the video's blank ending
+  (function watch() {
+    if (closed) return;
+    if (opening && video.currentTime >= OPEN_UNTIL) return close();
+    requestAnimationFrame(watch);
+  })();
   video.addEventListener("ended", close);
 
-  // Browsers only autoplay muted video. If autoplay is blocked
-  // (e.g. iPhone Low Power Mode), still open the invite after 3 seconds.
-  video.play().catch(() => setTimeout(close, PLAY_SECONDS * 1000));
-
-  // Safety net: on a very slow connection, don't keep guests waiting on a loading video.
-  setTimeout(close, 8000);
-
-  sound.addEventListener("click", () => {
+  sound.addEventListener("click", (e) => {
+    e.stopPropagation(); // the sound button must not open the site
     video.muted = !video.muted;
     sound.textContent = video.muted ? "🔇" : "🔊";
     sound.setAttribute("aria-label", video.muted ? "Turn sound on" : "Turn sound off");
@@ -92,34 +110,29 @@ function toast(msg) {
 const PETAL_COLORS = ["#f39a2b", "#f7b500", "#e8577a", "#ec7f37", "#f06292", "#ffca28", "#d84315"];
 const rand = (a, b) => a + Math.random() * (b - a);
 
-/* ---------- Flower shower: the marigold petal from the Haldi artwork drifts down ---------- */
-(function petalShower() {
-  const layer = document.createElement("div");
-  layer.className = "petal-shower";
-  layer.setAttribute("aria-hidden", "true");
-  document.body.appendChild(layer);
-  const count = window.innerWidth < 600 ? 6 : 8; // just a few petals, very light
+/* ---------- Flower shower over chosen sections (every .petal-zone: Lagnotsav, Wardrobe Planner) ---------- */
+document.querySelectorAll(".petal-zone").forEach((layer) => {
+  const COUNT = 8; // how many petals fall in each section
 
   function start() {
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < COUNT; i++) {
       const p = document.createElement("img");
       p.src = "assets/haldi/petal.png";
       p.alt = "";
-      p.className = "shower-petal";
-      const dur = rand(12, 18); // slow fall
-      p.style.cssText = `--left:${rand(0, 96)}vw; --size:${rand(16, 30)}px; --dur:${dur}s;
-        --delay:${-rand(0, dur)}s; --drift:${rand(-18, 18)}vw; --spin:${rand(-360, 360)}deg;
+      p.className = "zone-petal";
+      // sizes / drift are in design px (the layer scales with the invite)
+      p.style.cssText = `--left:${rand(3, 93)}%; --size:${rand(28, 46)}; --dur:${rand(7, 11)}s;
+        --delay:${rand(0, 4)}s; --drift:${rand(-120, 120)}; --spin:${rand(-360, 360)}deg;
         --flip:${Math.random() < 0.5 ? -1 : 1};`;
       layer.appendChild(p);
     }
   }
-  // start once the intro video has faded away
-  const intro = document.getElementById("intro");
-  if (intro.classList.contains("gone")) start();
-  else new MutationObserver((_, obs) => {
-    if (intro.classList.contains("gone")) { obs.disconnect(); start(); }
-  }).observe(intro, { attributes: true, attributeFilter: ["class"] });
-})();
+  // start the first time this section scrolls into view
+  const io = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) { io.disconnect(); start(); }
+  }, { threshold: 0.15 });
+  io.observe(layer);
+});
 
 /* ---------- Petal blast: real flower petals fly out from a point, then float down ---------- */
 function petalBlast(x, y, count = 45) {

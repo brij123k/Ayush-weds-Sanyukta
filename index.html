@@ -9,13 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
   <!-- bump ?v= after every change so browsers load the new files instead of a cached copy -->
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body class="intro-on">
 
-  <!-- Intro video: plays first, then fades away to reveal the invite -->
+  <!-- Intro video: plays, holds on its "tap to open" frame, and opens the invite when tapped -->
   <div id="intro" aria-label="Intro video">
-    <video id="introVideo" src="book.mp4" autoplay muted playsinline preload="auto"></video>
+    <video id="introVideo" src="book.mp4#t=0.05" muted playsinline preload="auto"></video>
     <button class="intro-btn intro-sound" id="introSound" aria-label="Turn sound on">🔇</button>
   </div>
 
@@ -86,6 +86,8 @@
          alt="Lagnotsav – Wedding · 24th January 2027 · Safa Bandhi 3 pm · Lagna Muhurat 6:45 pm" />
     <img class="el swing"    src="assets/wedding/chandelier.png" style="--x:55;  --y:9168; --w:217;" alt="" />
     <img class="el swing d2" src="assets/wedding/chandelier.png" style="--x:772; --y:9236; --w:217;" alt="" />
+    <!-- marigold petals fall over the Lagnotsav section, once it scrolls into view -->
+    <div class="el petal-zone" style="--x:0; --y:8955; --w:1080; --h:2097;" aria-hidden="true"></div>
 
     <!-- ========== MAMERU & RUKHWAT ========== -->
     <img class="el fade" src="assets/mameru/mameru.png" style="--x:0; --y:7023; --w:1080;"
@@ -95,10 +97,13 @@
     <img class="el dandiya"  src="assets/mameru/dandiya.png" style="--x:863; --y:8488; --w:216;" alt="" />
     <img class="el"          src="assets/sangeet/flower.png" style="--x:0; --y:7027; --w:508;" alt="" />
 
+  
     <!-- ========== WARDROBE PLANNER ========== -->
     <img class="el fade" src="assets/planner/planner.png" style="--x:0; --y:11097; --w:1061;" alt="Wardrobe Planner" />
     <a class="el hotspot planner-link" href="#" style="--x:240; --y:11207; --w:560; --h:260;" aria-label="Open wardrobe planner"></a>
     <a class="el hotspot planner-link" href="#" style="--x:210; --y:11637; --w:640; --h:950;" aria-label="Open wardrobe planner"></a>
+    <!-- marigold petals fall over the planner section only, once it scrolls into view -->
+    <div class="el petal-zone" style="--x:0; --y:11097; --w:1080; --h:1762;" aria-hidden="true"></div>
 
     <!-- ========== VENUE ========== -->
     <img class="el fade" src="assets/venue/venue-final.png" style="--x:0; --y:13392; --w:1080;"
@@ -107,13 +112,16 @@
     <img class="el tree-r" src="assets/venue/tree2.png" style="--x:706; --y:12867; --w:374;" alt="" />
 
     <div class="el countdown" id="countdown" style="--x:0; --y:13448; --w:1080;" aria-label="Countdown to the celebrations">
-      <b data-k="d">00</b><i>:</i><b data-k="h">00</b><i>:</i><b data-k="m">00</b><i>:</i><b data-k="s">00</b>
+      <span class="cd-unit"><b data-k="d">00</b><small>DAYS</small></span><i>:</i>
+      <span class="cd-unit"><b data-k="h">00</b><small>HOURS</small></span><i>:</i>
+      <span class="cd-unit"><b data-k="m">00</b><small>MINUTES</small></span><i>:</i>
+      <span class="cd-unit"><b data-k="s">00</b><small>SECONDS</small></span>
     </div>
     <a class="el hotspot" href="https://www.google.com/maps/search/?api=1&query=Stone+Water+Resort+Karjat"
        target="_blank" rel="noopener" style="--x:220; --y:13690; --w:640; --h:190;" aria-label="Open Stone Water Resort, Karjat in Google Maps"></a>
 
   </main>
 
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=14"></script>
 </body>
 </html>
