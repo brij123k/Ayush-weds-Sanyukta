@@ -12,7 +12,7 @@ const CONFIG = {
   sangeetSong: "",
   // Background music for the whole invite. Starts when the guest taps the book.
   // Put the MP3 at this path; if the file is missing, music simply stays off.
-  backgroundMusic: "assets/music/song.mp3",
+  backgroundMusic: "assets/music/hum-tum.mp3",
 };
 
 /* ---------- Background music ---------- */
@@ -274,6 +274,7 @@ function burst(anchor, { x, y, colors = ["#d4a43a", "#f4c9d0", "#e9b949", "#c46a
     if (finished) return;
     finished = true;
     wrap.classList.add("done");
+    document.getElementById("scratchHint")?.classList.add("done");
     burst(wrap);
   }
 
