@@ -43,15 +43,7 @@ button { border: 0; background: none; padding: 0; cursor: pointer; font: inherit
   width: calc(var(--w) * var(--px));
   height: auto;
 }
-.el[style*="--h"] { height: calc(var(--h) * var(--px)); }
-
-/* The Welcome page is a flat JPG with its own paper background (same tone as main-bg):
-   soften its top/bottom edges so the trees and paper blend into the invite. */
-.welcome {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0, #000 6%, #000 94%, transparent 100%);
-}
-img.el { pointer-events: none; }
+.el[style*="--h"] { height: calc(var(--h) * var(--px)); }img.el { pointer-events: none; }
 
 /* =========================================================
    Motion (subtle, so placement stays true to the design)

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
   <!-- bump ?v= after every change so browsers load the new files instead of a cached copy -->
-  <link rel="stylesheet" href="style.css?v=25" />
+  <link rel="stylesheet" href="style.css?v=26" />
 </head>
 <body class="intro-on">
 
@@ -35,8 +35,20 @@
   <main class="stage">
 
     <!-- ========== THE WELCOME (before Haldi; drawn under the invitation card so the card's torn edge overlaps it) ========== -->
-    <img class="el fade welcome" src="assets/welcome/welcome.jpg" style="--x:0; --y:3240; --w:1080;"
+    <!-- positions measured against the client's flat mockup by template matching -->
+    <img class="el fade" src="assets/welcome/welcome.png" style="--x:16; --y:3452; --w:1052;"
          alt="The Welcome · With warmth in our hearts and joy in the air, we eagerly await the pleasure of welcoming you to Stone Water Resort, Karjat by 10:00 AM · Welcome Lunch 12:00 PM onwards" />
+    <img class="el tree-l" src="assets/welcome/left-tree.png"  style="--x:-50; --y:3240; --w:477;" alt="" />
+    <img class="el tree-r" src="assets/welcome/right-tree.png" style="--x:730; --y:3302; --w:477;" alt="" />
+    <!-- garlands hanging from the trees -->
+    <img class="el swing"    src="assets/welcome/pink.png"   style="--x:14;   --y:3402; --w:63;" alt="" />
+    <img class="el swing d3" src="assets/welcome/yellow.png" style="--x:78;   --y:3514; --w:59;" alt="" />
+    <img class="el swing d2" src="assets/welcome/pink.png"   style="--x:130;  --y:3542; --w:63;" alt="" />
+    <img class="el swing"    src="assets/welcome/yellow.png" style="--x:212;  --y:3366; --w:59;" alt="" />
+    <img class="el swing d2" src="assets/welcome/yellow.png" style="--x:818;  --y:3488; --w:59;" alt="" />
+    <img class="el swing d3" src="assets/welcome/pink.png"   style="--x:894;  --y:3514; --w:63;" alt="" />
+    <img class="el swing"    src="assets/welcome/yellow.png" style="--x:966;  --y:3346; --w:59;" alt="" />
+    <img class="el swing d2" src="assets/welcome/pink.png"   style="--x:1016; --y:3566; --w:63;" alt="" />
 
     <!-- ========== HALDI (back layer: sits under the invitation card) ========== -->
     <img class="el fade" src="assets/haldi/haldi.png" style="--x:0; --y:4990; --w:992;"
@@ -141,6 +153,6 @@
 
   </main>
 
-  <script src="script.js?v=25"></script>
+  <script src="script.js?v=26"></script>
 </body>
 </html>
