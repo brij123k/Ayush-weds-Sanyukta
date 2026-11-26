@@ -115,10 +115,13 @@
     });
 
     /* ---------- background music ---------- */
-    const MUSIC_URL = "https://cdn.shopify.com/s/files/1/0778/9474/6301/files/audio.mp3?v=1795660547";
+    // A real MP3 served with the site. (The Shopify "audio.mp3" is actually a WebM file,
+    // which laptops play but iPhones and many Android phones refuse.)
+    const MUSIC_URL = "assets/music/style-guide.mp3";
     const audio = new Audio(MUSIC_URL);
     audio.loop = true;
     audio.preload = "auto";
+    audio.setAttribute("playsinline", "");
     audio.volume = 0.6;
     let wanted = true;
 
@@ -158,6 +161,14 @@
     };
     gate.addEventListener("click", openGuide);
     gate.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") openGuide(); });
+
+    // Safety net for phones: if the music still isn't playing, the guest's next tap anywhere starts it.
+    const kick = (e) => {
+      if (e.target.closest && e.target.closest(".music-btn")) return; // the ♫ button handles itself
+      if (wanted && audio.paused) audio.play().catch(() => {});
+    };
+    document.addEventListener("touchend", kick, { passive: true });
+    document.addEventListener("click", kick);
 
     // Some browsers allow sound straight away (e.g. right after tapping the planner on the invite):
     // if so, skip the tap screen and go directly to the guide.
