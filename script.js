@@ -9,13 +9,13 @@ const CONFIG = {
   // music keeps working on phones) and switches to its own song. Set to false for a "coming soon" note.
   styleGuide: {
     images: [1, 2, 3, 4, 5, 6].map((n) => `assets/styleguide/style-${n}.jpg`),
-    song: "assets/music/style-guide.mp3", // must be a REAL mp3 (check with `file`), not a renamed WebM
+    song: "assets/music/wedding-song.mp3", // must be a REAL mp3 (check with `file`), not a renamed WebM
   },
   // Optional song for the Sangeet ticket / vinyl, e.g. "assets/sangeet/song.mp3"
   sangeetSong: "",
   // Background music for the whole invite. Starts when the guest taps the book.
   // Put the MP3 at this path; if the file is missing, music simply stays off.
-  backgroundMusic: "assets/music/hum-tum.mp3",
+  backgroundMusic: "assets/music/wedding-song.mp3",
 };
 
 /* ---------- Background music ---------- */
