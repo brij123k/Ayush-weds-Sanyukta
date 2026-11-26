@@ -5,9 +5,12 @@
 const CONFIG = {
   // First event (Haldi) – 23 Jan 2027, 3:00 PM IST
   countdownTo: "2027-01-23T15:00:00+05:30",
-  // Wardrobe Planner – the style guide page that opens when the planner is tapped (has its own music).
-  // Leave "" to show a "coming soon" note.
-  wardrobePlannerUrl: "planner.html",
+  // Wardrobe Planner – tapping it opens the style guide ON TOP of the invite (same page, so the
+  // music keeps working on phones) and switches to its own song. Set to false for a "coming soon" note.
+  styleGuide: {
+    images: [1, 2, 3, 4, 5, 6].map((n) => `assets/styleguide/style-${n}.jpg`),
+    song: "assets/music/style-guide.mp3", // must be a REAL mp3 (check with `file`), not a renamed WebM
+  },
   // Optional song for the Sangeet ticket / vinyl, e.g. "assets/sangeet/song.mp3"
   sangeetSong: "",
   // Background music for the whole invite. Starts when the guest taps the book.
@@ -17,7 +20,7 @@ const CONFIG = {
 
 /* ---------- Background music ---------- */
 const music = (() => {
-  if (!CONFIG.backgroundMusic) return { ready: false, start() {} };
+  if (!CONFIG.backgroundMusic) return { ready: false, start() {}, switchTo() { return 0; } };
   const audio = new Audio(CONFIG.backgroundMusic);
   audio.loop = true;
   audio.preload = "auto";
@@ -56,6 +59,20 @@ const music = (() => {
     start() {
       state.wanted = true;
       audio.play().then(() => { btn.hidden = false; }).catch(() => {});
+    },
+    // Change the song on this SAME player (phones only allow sound on a player a tap already started,
+    // so never create a second Audio). Returns where the previous song was, so it can resume later.
+    // Call it from a tap so it also works if the music wasn't started yet.
+    switchTo(src, at = 0) {
+      const was = audio.currentTime;
+      const url = new URL(src, location.href).href;
+      if (audio.src !== url) {
+        audio.src = url;
+        if (at) audio.addEventListener("loadedmetadata", () => { audio.currentTime = at; }, { once: true });
+      }
+      state.wanted = true;
+      audio.play().then(() => { btn.hidden = false; }).catch(() => {});
+      return was;
     },
   };
 })();
@@ -336,9 +353,54 @@ function burst(anchor, { x, y, colors = ["#d4a43a", "#f4c9d0", "#e9b949", "#c46a
 })();
 
 /* ---------- Wardrobe planner ---------- */
+const styleGuide = (() => {
+  const cfg = CONFIG.styleGuide;
+  if (!cfg) return null;
+  const box = document.createElement("div");
+  box.className = "guide-overlay";
+  box.hidden = true;
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", "Style guide");
+  box.innerHTML = '<button class="guide-back" type="button">← Invite</button><div class="guide-pages"></div>';
+  document.body.appendChild(box);
+  const pages = box.querySelector(".guide-pages");
+  let mainSongAt = 0;
+
+  function open() {
+    if (!pages.children.length) { // load the images only the first time it is opened
+      cfg.images.forEach((src, i) => {
+        const img = new Image();
+        img.alt = i === 0 ? "Sanyukta & Ayush · Style Guide" : "";
+        img.addEventListener("load", () => img.classList.add("in"), { once: true });
+        img.src = src;
+        pages.appendChild(img);
+      });
+    }
+    box.hidden = false;
+    box.scrollTop = 0;
+    document.body.classList.add("guide-open");
+    mainSongAt = music.switchTo(cfg.song);
+    history.pushState({ guide: true }, "", "#style-guide"); // phone back button closes it
+  }
+  function close(fromHistory) {
+    if (box.hidden) return;
+    box.hidden = true;
+    document.body.classList.remove("guide-open");
+    if (CONFIG.backgroundMusic) music.switchTo(CONFIG.backgroundMusic, mainSongAt); // invite song resumes where it was
+    if (!fromHistory && history.state && history.state.guide) history.back();
+  }
+  box.querySelector(".guide-back").addEventListener("click", () => close(false));
+  window.addEventListener("popstate", () => close(true));
+  return { open };
+})();
+
 document.querySelectorAll(".planner-link").forEach((a) => {
-  if (CONFIG.wardrobePlannerUrl) {
-    a.href = CONFIG.wardrobePlannerUrl; // opens the style guide page in the same tab
+  if (styleGuide) {
+    a.href = "#style-guide";
+    a.addEventListener("click", (e) => {
+      e.preventDefault(); // stay on this page so the music keeps playing
+      styleGuide.open();
+    });
   } else {
     a.addEventListener("click", (e) => {
       e.preventDefault();
