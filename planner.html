@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sanyukta & Ayush · Style Guide</title>
+  <meta name="description" content="Sanyukta & Ayush · Wardrobe planner & style guide for every celebration" />
+  <meta name="theme-color" content="#f6e8e1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="assets/styleguide/style-1.jpg" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: #f6e8e1;
+      font-family: "Gilda Display", Georgia, serif;
+      color: #5a3b2a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body.locked { overflow: hidden; }
+
+    /* the guide: one tall image cut into 6 parts so the top shows while the rest loads */
+    .guide {
+      width: 100%; max-width: 560px; margin: 0 auto;
+      background: #f6e8e1;
+      box-shadow: 0 0 40px rgba(90, 59, 42, .12);
+    }
+    .guide img {
+      display: block; width: 100%; height: auto;
+      aspect-ratio: 1080 / 1920;          /* reserves space → no jumping while loading */
+      opacity: 0; transition: opacity .8s ease;
+    }
+    .guide img.in { opacity: 1; }
+
+    /* tap-to-open screen (browsers only allow music after a tap) */
+    #gate {
+      position: fixed; inset: 0; z-index: 60;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+      background: radial-gradient(circle at 50% 40%, #fbf3ee 0%, #f3dfd5 100%);
+      text-align: center; padding: 24px;
+      transition: opacity .9s ease, visibility .9s;
+      cursor: pointer;
+    }
+    #gate.hide { opacity: 0; visibility: hidden; }
+    #gate .mono { font-size: 64px; line-height: 1; color: #c9799a; letter-spacing: -4px; }
+    #gate .mono span { color: #a7b86a; }
+    #gate h1 { margin: 0; font-weight: 400; font-size: 26px; color: #b0607f; font-style: italic; }
+    #gate p { margin: 0; font-size: 14px; letter-spacing: .28em; text-transform: uppercase; color: #6b4a37; }
+    #gate .open {
+      margin-top: 8px; padding: 12px 28px; border-radius: 999px;
+      border: 1px solid #b0607f; color: #b0607f; background: rgba(255, 255, 255, .5);
+      font: inherit; font-size: 15px; letter-spacing: .12em; cursor: pointer;
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { transform: scale(1.06); box-shadow: 0 0 0 8px rgba(176, 96, 127, .08); } }
+
+    /* back to the invitation */
+    .back {
+      position: fixed; left: 14px; top: 14px; z-index: 50;
+      padding: 8px 14px; border-radius: 999px;
+      background: rgba(60, 40, 20, .6); color: #fff; text-decoration: none;
+      font-size: 13px; letter-spacing: .04em;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+    }
+
+    /* floating music button – same look as on the invite */
+    @keyframes musicSpin { to { transform: rotate(360deg); } }
+    .music-btn {
+      position: fixed; right: 16px; bottom: 16px; z-index: 50;
+      width: 44px; height: 44px; border-radius: 50%; border: 0;
+      display: grid; place-items: center;
+      background: rgba(60, 40, 20, .7); color: #fff; font-size: 20px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+    }
+    .music-btn span { display: block; }
+    .music-btn.playing span { animation: musicSpin 3s linear infinite; }
+    .music-btn:not(.playing) { opacity: .7; }
+    .music-btn:not(.playing)::after {
+      content: ""; position: absolute; width: 26px; height: 2px; background: #fff; transform: rotate(-45deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .guide img { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <div id="gate" role="button" tabindex="0" aria-label="Tap to open the style guide">
+    <div class="mono">S<span>A</span></div>
+    <h1>Sanyukta &amp; Ayush</h1>
+    <p>Style Guide</p>
+    <button class="open" type="button">Tap to open ♫</button>
+  </div>
+
+  <a class="back" href="index.html" aria-label="Back to the invitation">← Invite</a>
+
+  <main class="guide" aria-label="Style guide">
+    <img src="assets/styleguide/style-1.jpg" alt="Sanyukta & Ayush · Style Guide" />
+    <img src="assets/styleguide/style-2.jpg" alt="O Rangrez · Haldi & Mehendi · A celebration of colour, laughter and blessings. His: colourful kurtas, printed ensembles or relaxed festive Indian wear. Hers: bright hues, playful prints, floral details." loading="lazy" />
+    <img src="assets/styleguide/style-3.jpg" alt="Our Soundtrack · Sangeet Night · Bring on the bling. His: Indo-western outfits, bandhgalas, statement jackets. Hers: lehengas, cocktail sarees and all things sparkling." loading="lazy" />
+    <img src="assets/styleguide/style-4.jpg" alt="2 States · Mameru & Rukhwat · A touch of Gujarati tradition. His: bandis, jackets, kurtas, festive Gujarati or Marathi wear. Hers: chaniya cholis, festive Gujarati lehengas." loading="lazy" />
+    <img src="assets/styleguide/style-5.jpg" alt="Lagnotsav · Wedding · His: regal sherwanis, bandhgalas and elegant Indian traditional ensembles. Hers: heirloom sarees, elegant lehengas and timeless Indian couture." loading="lazy" />
+    <img class="last" src="assets/styleguide/style-6.jpg" alt="Easy Glam · After Party · His: smart separates, linens, relaxed tailoring or a smart shirt. Hers: dresses, co-ords, smart drapes, sleek sets." loading="lazy" />
+  </main>
+
+  <script>
+    /* ---------- fade each part in once it has loaded ---------- */
+    document.querySelectorAll(".guide img").forEach((img) => {
+      const show = () => img.classList.add("in");
+      img.complete ? show() : img.addEventListener("load", show, { once: true });
+    });
+
+    /* ---------- background music ---------- */
+    const MUSIC_URL = "https://cdn.shopify.com/s/files/1/0778/9474/6301/files/audio.mp3?v=1795660547";
+    const audio = new Audio(MUSIC_URL);
+    audio.loop = true;
+    audio.preload = "auto";
+    audio.volume = 0.6;
+    let wanted = true;
+
+    const btn = document.createElement("button");
+    btn.className = "music-btn";
+    btn.innerHTML = '<span aria-hidden="true">♫</span>';
+    document.body.appendChild(btn);
+    const paint = () => {
+      const on = !audio.paused;
+      btn.classList.toggle("playing", on);
+      btn.setAttribute("aria-label", on ? "Pause music" : "Play music");
+    };
+    audio.addEventListener("play", paint);
+    audio.addEventListener("pause", paint);
+    audio.addEventListener("error", () => { btn.hidden = true; });
+    paint();
+
+    btn.addEventListener("click", () => {
+      wanted = audio.paused;
+      audio.paused ? audio.play().catch(() => {}) : audio.pause();
+    });
+
+    // pause when the guest switches app/tab, resume when they come back
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) audio.pause();
+      else if (wanted) audio.play().catch(() => {});
+    });
+
+    /* ---------- tap-to-open screen ---------- */
+    const gate = document.getElementById("gate");
+    const openGuide = () => {
+      if (gate.classList.contains("hide")) return;
+      gate.classList.add("hide");
+      document.body.classList.remove("locked");
+      wanted = true;
+      audio.play().catch(() => {});
+    };
+    gate.addEventListener("click", openGuide);
+    gate.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") openGuide(); });
+
+    // Some browsers allow sound straight away (e.g. right after tapping the planner on the invite):
+    // if so, skip the tap screen and go directly to the guide.
+    audio.play().then(() => {
+      gate.classList.add("hide");
+      document.body.classList.remove("locked");
+    }).catch(() => { /* blocked → guest taps "Tap to open", which starts the music */ });
+  </script>
+</body>
+</html>
